@@ -126,18 +126,27 @@ def sanity_check(segment):
 
 def remap(segment, mode):
 
+    # 统一保证标签为非负整数
+    segment = np.asarray(segment, dtype=np.int32)
+    segment[segment < 0] = 0
+
     if mode == "5":
 
-        return segment
+        # 5 类：标签范围 [0, 4]
+        return np.clip(segment, 0, 4)
 
     if mode == "4":
 
+        # 只保留大于 0 的点，将 1~4 映射为 0~3，并裁剪到 [0, 3]
         mask = segment > 0
-        return segment[mask] - 1
+        seg4 = segment[mask] - 1
+        seg4 = np.clip(seg4, 0, 3)
+        return seg4
 
     if mode == "2":
 
-        out = np.zeros_like(segment)
+        # 2 类：显式约束为 0 / 1
+        out = np.zeros_like(segment, dtype=np.int32)
         out[segment > 0] = 1
         return out
 
