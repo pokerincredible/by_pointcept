@@ -138,6 +138,16 @@ def process_case_cleaned(
     vertices_path = case_dir / vertices_name
     kept_idx_path = case_dir / kept_vertex_indices_name
 
+    # 兼容 aligned 输出命名
+    if not stl_path.exists():
+        alt_stl = case_dir / "femur_largest_aligned.stl"
+        if alt_stl.exists():
+            stl_path = alt_stl
+    if not vertices_path.exists():
+        alt_v = case_dir / "vertices_largest_aligned.txt"
+        if alt_v.exists():
+            vertices_path = alt_v
+
     if not stl_path.exists() or not vertices_path.exists():
         print("skip:", case_name)
         return
